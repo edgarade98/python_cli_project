@@ -11,7 +11,9 @@ def cli():
 @click.option("--last-name", required=True)
 @click.option("--email", required=True)
 @click.argument("contact_details", nargs=-1)
-def add_contact(first_name, last_name, email, contact_details):
+@click.option("--phone-type", default="personal", type=click.Choice(["friends", "work", "home", "family"]))
+
+def add_contact(first_name, last_name, email, contact_details, phone_type):
     session = SessionLocal()
     contact = Contact(first_name=first_name, last_name=last_name, email=email)
     addresses, phone_numbers = [], []
@@ -30,7 +32,7 @@ def add_contact(first_name, last_name, email, contact_details):
         contact.addresses.append(new_address)
 
     for phone_number in phone_numbers:
-        new_phone_number = PhoneNumber(number=phone_number, type="personal", contact=contact)
+        new_phone_number = PhoneNumber(number=phone_number, type=phone_type, contact=contact)
         contact.phone_numbers.append(new_phone_number)
 
     session.add(contact)
