@@ -37,3 +37,16 @@ def add_contact(first_name, last_name, email, contact_details):
     session.commit()
     session.close()
     click.echo(f"Contact : {first_name} {last_name} added.")
+
+
+@cli.command()
+def list_contacts():
+    session = SessionLocal()
+    contacts = session.query(Contact).all()
+    for contact in contacts:
+        print(f"{contact.first_name} {contact.last_name} ({contact.email})")
+        for address in contact.addresses:
+            print(f"  - {address.city}, {address.country} ")
+        for phone_number in contact.phone_numbers:
+            print(f"  - {phone_number.number} ({phone_number.type})")
+    session.close()
