@@ -63,3 +63,19 @@ def delete_contact(email):
         click.echo(f"Contact with email {email} deleted.")
     else:
         click.echo(f"No contact found with email {email}.")
+
+@cli.command()
+@click.argument("search_term", required=True)
+def search_contacts(search_term):
+    session = SessionLocal()
+    contacts = session.query(Contact).filter(Contact.first_name.ilike(f"%{search_term}%") | Contact.last_name.ilike(f"%{search_term}%") | Contact.email.ilike(f"%{search_term}%")).all()
+    for contact in contacts:
+        print(f"{contact.first_name} {contact.last_name} ({contact.email})")
+        for address in contact.addresses:
+            print(f"  - {address.city}, {address.country}")
+        for phone_number in contact.phone_numbers:
+            print(f"  - {phone_number.number} ({phone_number.type})")
+    session.close()
+
+if __name__ == "__main__":
+    cli()
