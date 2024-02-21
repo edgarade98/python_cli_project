@@ -50,3 +50,16 @@ def list_contacts():
         for phone_number in contact.phone_numbers:
             print(f"  - {phone_number.number} ({phone_number.type})")
     session.close()
+
+@cli.command()
+@click.argument("email", required=True)
+def delete_contact(email):
+    session = SessionLocal()
+    contact = session.query(Contact).filter_by(email=email).first()
+    if contact:
+        session.delete(contact)
+        session.commit()
+        session.close()
+        click.echo(f"Contact with email {email} deleted.")
+    else:
+        click.echo(f"No contact found with email {email}.")
